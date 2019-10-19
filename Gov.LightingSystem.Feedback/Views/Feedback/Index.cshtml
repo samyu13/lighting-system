@@ -1,0 +1,47 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, IfTagHelper
+@model Gov.LightingSystem.Feedback.Models.UserFeedbackModel
+ @{
+        Layout = null;
+ }
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Feedback</title>
+    </head>
+    <body>
+        <h1>
+            Feedback
+        </h1>
+        @{
+            //var nextQuestion = (int)@ViewBag.QuestionId + 1;
+           var previoustQuestion = @ViewBag.QuestionId - 1;
+            var viewName = "~/shared/_question" + ((int)@ViewBag.QuestionId).ToString() + ".cshtml";
+           // var modelName = "Model" + ((int)@ViewBag.QuestionId);
+        }
+        <div>
+            @if (previoustQuestion > 0)
+            {
+              <a asp-controller="Feedback" asp-action="Index" asp-route-id="@previoustQuestion" class="govuk-back-link">Back</a>
+            }
+
+        </div>
+        <form asp-controller="" asp-action="">
+            <div>
+                <partial name="@viewName" for="@Model" />
+            </div>
+            <div>
+                @if ((int)@ViewBag.QuestionId <= 5)
+                {
+                    <button type="submit" class="govuk-button" asp-controller="Feedback"
+                       asp-action="Index" asp-route-id="@ViewBag.QuestionId">
+                        Save and continue
+                    </button>
+                }
+            </div>
+        </form>
+        
+    </body>
+</html>
