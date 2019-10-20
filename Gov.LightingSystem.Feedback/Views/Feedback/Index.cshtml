@@ -3,11 +3,9 @@
 @{
             Layout = "~/Views/Shared/_layout.cshtml";
 }     
-@{
-    //var nextQuestion = (int)@ViewBag.QuestionId + 1;
+@{   
     var id = (int)@ViewBag.QuestionId;
     var viewName = "~/Views/Shared/_question" + id.ToString() + ".cshtml";
-    // var modelName = "Model" + ((int)@ViewBag.QuestionId);
 }
 <div class="govuk-grid-row">
     <div >
@@ -29,7 +27,8 @@
                 }
             </div>
             @if ((int)@ViewBag.QuestionId <= 5)
-            {               
+            {   
+                <br/>
                 <button type="submit" class="govuk-button" asp-controller="Feedback"
                         asp-action="Index" asp-route-id="@ViewBag.QuestionId">
                     continue

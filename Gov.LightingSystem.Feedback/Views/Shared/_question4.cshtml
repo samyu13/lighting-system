@@ -9,13 +9,15 @@
     </legend>
     <div class="govuk-radios govuk-radios--inline">
         <div class="govuk-radios__item">
-            <input class="govuk-radios__input" value="true" name="isHappyWithService" type="radio" @Html.Raw(Model.IsHappyWithService != null && Model.IsHappyWithService == true ? "checked" : "") />
+            <input class="govuk-radios__input" value="true" name="isHappyWithService" type="radio"
+                   @Html.Raw(Model.IsHappyWithService != null && Model.IsHappyWithService == true ? "checked" : "") />
             <label class="govuk-label govuk-radios__label" for="changed-name">
                 Yes
             </label>
         </div>
         <div class="govuk-radios__item">
-            <input class="govuk-radios__input" value="false" name="isHappyWithService" type="radio" @Html.Raw(Model.IsHappyWithService == null || Model.IsHappyWithService == false  ? "" : "checked") >
+            <input class="govuk-radios__input" value="false" name="isHappyWithService" type="radio"
+                   @Html.Raw(Model.IsHappyWithService != null && Model.IsHappyWithService == false  ? "checked" : "") >
             <label class="govuk-label govuk-radios__label" for="changed-name-2">
                 No
             </label>

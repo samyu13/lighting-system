@@ -7,4 +7,4 @@
 <span  class="govuk-hint">
    1 being very dark and 10 being very bright
 </span>
-<select asp-for="LevelOfBrightness" class="govuk-select" asp-items="Model.BrightnessIndex"></select>
+<select asp-for="LevelOfBrightness" class="govuk-select" asp-items="@Model.getBrightnessIndex()"></select>

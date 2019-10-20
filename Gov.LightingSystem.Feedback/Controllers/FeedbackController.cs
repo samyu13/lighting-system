@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using Gov.LightingSystem.Feedback.Helper;
 using Gov.LightingSystem.Feedback.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +8,7 @@ namespace Gov.LightingSystem.Feedback.Controllers
     [Route("[controller]")]
     public class FeedbackController : Controller
     {
-        private static readonly string SESS_MODEL_KEY = "feedback";       
+        public static readonly string SESS_MODEL_KEY = "feedback";       
         Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
         private readonly IUserFeedbackRepository _userFeedbackRepository;
@@ -20,10 +16,10 @@ namespace Gov.LightingSystem.Feedback.Controllers
         {
             _userFeedbackRepository = userFeedbackRepository;
         }
-
        
         [HttpGet]
-        [Route("/{id?}")]
+        [Route("~/")]
+        [Route("")]
         public IActionResult Index(int? id)
         {
             ViewBag.QuestionId = id?? 1;
@@ -41,11 +37,12 @@ namespace Gov.LightingSystem.Feedback.Controllers
                 case 1:
                     objComplex.UserName = model.UserName;
                     if (string.IsNullOrEmpty(model.UserName)) 
-                       errorMessage = "Missing name";                  
+                       errorMessage = "Missing User Name";
+                    if (model.UserName.Length > 50)
+                        errorMessage = "Invalid Username";
                     break;
                 case 2:
                        objComplex.EmailAddress = model.EmailAddress;
-
                     if (string.IsNullOrEmpty(model.EmailAddress) || !emailRegex.IsMatch(model.EmailAddress))                   
                         errorMessage = "Missing or Invalid email";                 
                     break;
@@ -113,12 +110,13 @@ namespace Gov.LightingSystem.Feedback.Controllers
         [Route("/Summary")]
         public IActionResult PostSummary()
         {
-            //add feedback details  
-            var userFeedback = getFeedbackFromSession();
-            HttpContext.Session.SetObject(SESS_MODEL_KEY, new UserFeedback());
+            //store feedback details  
+            var userFeedback = getFeedbackFromSession(); 
             var feedback =  _userFeedbackRepository.AddFeedback(userFeedback);
             if (feedback != null)
-            {               
+            {
+                // clear session once the data is saved
+                HttpContext.Session.Clear();
                 return RedirectToAction("Confirm");
             }
             else

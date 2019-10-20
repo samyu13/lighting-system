@@ -46,21 +46,10 @@ namespace Gov.LightingSystem.Feedback
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-            }
-
-            //app.UseMvcWithDefaultRoute();
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute("default", "{controller}/{action}/{id?}");
-            //});
-          
+               app.UseDeveloperExceptionPage();
+            }        
             app.UseSession();
-            app.UseMvc();
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
+            app.UseMvc();          
         }
     }
 }
