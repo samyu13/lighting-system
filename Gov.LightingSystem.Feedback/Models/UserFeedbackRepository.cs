@@ -5,7 +5,18 @@ using System.Threading.Tasks;
 
 namespace Gov.LightingSystem.Feedback.Models
 {
-    public class UserFeedbackRepository
+    public class UserFeedbackRepository : IUserFeedbackRepository
     {
+        private readonly IUserFeedbackRepository _userFeedbackRepository;
+
+        public UserFeedbackRepository(IUserFeedbackRepository userFeedbackRepository)
+        {
+            _userFeedbackRepository = userFeedbackRepository;
+        }
+
+        public UserFeedback AddFeedback(UserFeedback feedback)
+        {
+          return   _userFeedbackRepository.AddFeedback(feedback);
+        }
     }
 }

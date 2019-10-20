@@ -1,47 +1,43 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@addTagHelper *, IfTagHelper
-@model Gov.LightingSystem.Feedback.Models.UserFeedbackModel
- @{
-        Layout = null;
- }
-
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width" />
-        <title>Feedback</title>
-    </head>
-    <body>
-        <h1>
-            Feedback
-        </h1>
-        @{
-            //var nextQuestion = (int)@ViewBag.QuestionId + 1;
-           var previoustQuestion = @ViewBag.QuestionId - 1;
-            var viewName = "~/shared/_question" + ((int)@ViewBag.QuestionId).ToString() + ".cshtml";
-           // var modelName = "Model" + ((int)@ViewBag.QuestionId);
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers  
+@model Gov.LightingSystem.Feedback.Models.UserFeedback
+@{
+            Layout = "~/Views/Shared/_layout.cshtml";
+}     
+@{
+    //var nextQuestion = (int)@ViewBag.QuestionId + 1;
+    var id = (int)@ViewBag.QuestionId;
+    var viewName = "~/Views/Shared/_question" + id.ToString() + ".cshtml";
+    // var modelName = "Model" + ((int)@ViewBag.QuestionId);
+}
+<div class="govuk-grid-row">
+    <div >
+        @if (id > 1)
+        {
+            <a asp-controller="Feedback" asp-action="Index" asp-route-id="@(id-1)" class="govuk-back-link">Back</a>
         }
-        <div>
-            @if (previoustQuestion > 0)
-            {
-              <a asp-controller="Feedback" asp-action="Index" asp-route-id="@previoustQuestion" class="govuk-back-link">Back</a>
-            }
+        <form method="post">
+            <div class="">
 
-        </div>
-        <form asp-controller="" asp-action="">
-            <div>
                 <partial name="@viewName" for="@Model" />
+
             </div>
-            <div>
-                @if ((int)@ViewBag.QuestionId <= 5)
+
+            <div class="">
+                @if (@ViewBag.errorMessage != null)
                 {
-                    <button type="submit" class="govuk-button" asp-controller="Feedback"
-                       asp-action="Index" asp-route-id="@ViewBag.QuestionId">
-                        Save and continue
-                    </button>
+                    <span class="govuk-error-message">@ViewBag.errorMessage</span>
                 }
             </div>
+            @if ((int)@ViewBag.QuestionId <= 5)
+            {               
+                <button type="submit" class="govuk-button" asp-controller="Feedback"
+                        asp-action="Index" asp-route-id="@ViewBag.QuestionId">
+                    continue
+                </button>                
+            }
         </form>
-        
-    </body>
-</html>
+    </div>
+    </div>
+
+
+

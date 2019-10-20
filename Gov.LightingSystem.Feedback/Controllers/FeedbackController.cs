@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,64 +9,133 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gov.LightingSystem.Feedback.Controllers
 {
+    [Route("[controller]")]
     public class FeedbackController : Controller
     {
-        private static readonly string SESS_MODEL_KEY = "feedback";
+        private static readonly string SESS_MODEL_KEY = "feedback";       
+        Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
-        [Route("~/")]
-        [HttpGet]
-        [Route("/feedback/")]
-        public IActionResult Index()
-        {            
-            ViewBag.QuestionId = 1;
-
-            return View(getFeedbackFromSession());
-        }
-      
-       
-        [HttpPost("/feedback")]
-        [ValidateAntiForgeryToken]
-        public ViewResult Index(int id, UserFeedbackModel model)
+        private readonly IUserFeedbackRepository _userFeedbackRepository;
+        public FeedbackController(IUserFeedbackRepository userFeedbackRepository)
         {
-            // questionId = questionId ?? 1;  
+            _userFeedbackRepository = userFeedbackRepository;
+        }
+
+       
+        [HttpGet]
+        [Route("/{id?}")]
+        public IActionResult Index(int? id)
+        {
+            ViewBag.QuestionId = id?? 1;
+            return View(getFeedbackFromSession());
+        }      
+       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index(int id, UserFeedback model)
+        {             
             var objComplex = getFeedbackFromSession();
+            string errorMessage = null;
             switch (id)
             {
                 case 1:
                     objComplex.UserName = model.UserName;
+                    if (string.IsNullOrEmpty(model.UserName)) 
+                       errorMessage = "Missing name";                  
                     break;
                 case 2:
-                    objComplex.EmailAddress = model.EmailAddress;
+                       objComplex.EmailAddress = model.EmailAddress;
+
+                    if (string.IsNullOrEmpty(model.EmailAddress) || !emailRegex.IsMatch(model.EmailAddress))                   
+                        errorMessage = "Missing or Invalid email";                 
                     break;
                 case 3:
                     objComplex.HomeAddress = model.HomeAddress;
+                    if (string.IsNullOrEmpty(model.HomeAddress))
+                        errorMessage = "Missing address";
                     break;
                 case 4:
-                    objComplex.IsHappyWithService = model.IsHappyWithService;
+                     objComplex.IsHappyWithService = model.IsHappyWithService;
                     break;
                 case 5:
-                    objComplex.LevelOfBrightness = model.LevelOfBrightness;
+                    objComplex.LevelOfBrightness = model.LevelOfBrightness;                       
                     break;
             }
-            HttpContext.Session.SetObject(SESS_MODEL_KEY, objComplex);
-            ViewBag.QuestionId = id+1;
-            return View(objComplex);
-        }       
 
-        private UserFeedbackModel getFeedbackFromSession()
+            HttpContext.Session.SetObject(SESS_MODEL_KEY, objComplex);           
+            if(id == 5)
+            {
+              return  RedirectToAction("Summary");
+            }
+            if (errorMessage != null)
+            {
+                ViewBag.QuestionId = id;
+                ViewBag.errorMessage = errorMessage;
+            } else
+            {
+                ViewBag.QuestionId = id + 1;
+            }
+
+            return View(objComplex);
+        }  
+
+        private UserFeedback getFeedbackFromSession()
         {
 
-            var objComplex = HttpContext.Session.GetObject<UserFeedbackModel>(SESS_MODEL_KEY);
+            var objComplex = HttpContext.Session.GetObject<UserFeedback>(SESS_MODEL_KEY);
             if (objComplex == null)
             {
-                objComplex = new UserFeedbackModel();
+                objComplex = new UserFeedback();
+                objComplex.LevelOfBrightness = 1;
                 HttpContext.Session.SetObject(SESS_MODEL_KEY, objComplex);
             }
 
             return objComplex;
 
         }
+
+        [HttpGet]
+        [Route("/Summary")]
+        public IActionResult Summary() {
+
+            var userFeedback = getFeedbackFromSession();
+            if(string.IsNullOrEmpty(userFeedback.UserName)  || 
+                string.IsNullOrEmpty(userFeedback.EmailAddress) ||
+                    string.IsNullOrEmpty(userFeedback.HomeAddress))
+            {
+                return RedirectToAction("Index",1);
+            }
+                return View("Summary", getFeedbackFromSession());
+        }
+
+        [ActionName("Summary")]
+        [HttpPost]
+        [Route("/Summary")]
+        public IActionResult PostSummary()
+        {
+            //add feedback details  
+            var userFeedback = getFeedbackFromSession();
+            HttpContext.Session.SetObject(SESS_MODEL_KEY, new UserFeedback());
+            var feedback =  _userFeedbackRepository.AddFeedback(userFeedback);
+            if (feedback != null)
+            {               
+                return RedirectToAction("Confirm");
+            }
+            else
+                return RedirectToAction("Error");
+        }
+
+        [Route("Confirm")]
+        public IActionResult Confirm()
+        {
+            return View("Confirm");
+        }
+
+        [Route("Error")]
+        public IActionResult Error()
+        {
+            return View("Error");
+        }
+
     }
-
-
 }

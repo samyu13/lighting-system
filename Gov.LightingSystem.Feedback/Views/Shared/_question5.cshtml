@@ -1,0 +1,10 @@
+﻿@model Gov.LightingSystem.Feedback.Models.UserFeedback
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<label class="govuk-label" for="levelOfBrightness">
+    Level Of Brightness
+</label>
+<span  class="govuk-hint">
+   1 being very dark and 10 being very bright
+</span>
+<select asp-for="LevelOfBrightness" class="govuk-select" asp-items="Model.BrightnessIndex"></select>

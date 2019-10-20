@@ -1,0 +1,79 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Gov.LightingSystem.Feedback.Models.UserFeedback
+@{
+    Layout = "~/Views/Shared/_layout.cshtml";
+}
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/Feedback?id=1">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/Feedback?id=2">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Html.DisplayNameFor(model => model.HomeAddress)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Html.DisplayFor(model => model.HomeAddress)
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/Feedback?id=3">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Html.DisplayNameFor(model => model.IsHappyWithService)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Html.Raw(Model.IsHappyWithService != null && Model.IsHappyWithService == true ? "Yes" : "No")
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/Feedback?id=4">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Html.DisplayNameFor(model => model.LevelOfBrightness)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Html.DisplayFor(model => model.LevelOfBrightness)
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/Feedback?id=5">Change</a>
+        </dd>
+    </div>
+</dl>
+<div>
+    <form method="post" asp-controller="Feedback" asp-action="Summary">
+        <button type="submit" class="govuk-button">
+            continue
+        </button>
+    </form>
+</div>
+
